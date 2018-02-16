@@ -23,6 +23,50 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tooltip-content {
+  border: 1px solid black;
+  background: white;
+  padding: 20px;
+  position: relative;
+  transform: translate(calc(-50% + 7px), calc(-100% - 20px));
+}
+
+.tooltip-content:before {
+  background: inherit;
+  content: "";
+  padding: 0px;
+  transform: rotate(45deg);
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  z-index: 99;
+  border-right: inherit;
+  border-bottom: inherit;
+  bottom: -8px;
+  left: calc(50% - 15px);
+}
+
+circle.frame-hover {
+  fill: none;
+  stroke: black;
+}
+
+.axis text {
+  fill: lightgrey;
+}
+
+.axis path {
+  stroke: lightgrey;
+}
+
+.axis .baseline {
+  stroke: none;
 }
