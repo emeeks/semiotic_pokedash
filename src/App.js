@@ -7,23 +7,24 @@ import Legend from "./Legend"
 import TypeBars from "./TypeBars"
 import pokedata from "./data/pokemon.json"
 import { typeColors } from "./settings/color"
-import { XYFrame } from "semiotic"
+import { MinimapXYFrame, XYFrame } from "semiotic"
 console.log("pokedata", pokedata)
 
 const pokeGenerations = []
 const pokeGenerationHash = {}
-pokedata.filter(d => d.family).forEach(pokemon => {
+pokedata.forEach(pokemon => {
   if (!pokeGenerationHash[pokemon.family]) {
     pokeGenerationHash[pokemon.family] = {
       label: pokemon.family,
       color: typeColors[pokemon.type1],
+      type: pokemon.type1,
       coordinates: []
     }
+    pokeGenerations.push(pokeGenerationHash[pokemon.family])
   }
+  pokemon.generation = pokeGenerationHash[pokemon.family].coordinates.length + 1
   pokeGenerationHash[pokemon.family].coordinates.push(pokemon)
 })
-
-console.log("pokeGenerations", pokeGenerations)
 
 class App extends Component {
   constructor(props) {
@@ -82,17 +83,14 @@ class App extends Component {
   }
 
   render() {
-    console.log("this.state", this.state)
     const { filteredData } = this.state
+    const filteredFamilies = filteredData.map(d => d.family)
+
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Pokemon Dashboard</h1>
         </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
         <div className="row">
           <div className="col-xs-6">
             <div className="box">
@@ -117,7 +115,66 @@ class App extends Component {
               </div>
             </div>
             <div className="row">
-              <div className="box">Some other other viz</div>
+              <div className="box">
+                <XYFrame
+                  lines={pokeGenerations.filter(
+                    d =>
+                      filteredFamilies.length === 0 ||
+                      filteredFamilies.indexOf(d.label) !== -1
+                  )}
+                  size={[550, 550]}
+                  xAccessor={"generation"}
+                  yAccessor={"attack"}
+                  yExtent={[0, 160]}
+                  lineStyle={d => ({
+                    stroke: d.color,
+                    strokeOpacity: 0.8,
+                    strokeWidth: 4
+                  })}
+                  pointStyle={d => ({
+                    fill: typeColors[d.type1],
+                    stroke: typeColors[d.type1],
+                    r: 2
+                  })}
+                  showLinePoints={true}
+                  axes={[
+                    {
+                      orient: "left",
+                      label: "Attack",
+                      baseline: false
+                    },
+                    {
+                      orient: "bottom",
+                      label: "Generation",
+                      tickValues: [1, 2, 3, 4],
+                      baseline: false
+                    }
+                  ]}
+                  hoverAnnotation={true}
+                  tooltipContent={d => (
+                    <div className="tooltip-content">
+                      <p>{d.name}</p>
+                      <p>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            borderRadius: "100%",
+                            marginRight: "5px",
+                            height: "20px",
+                            width: "20px",
+                            background: typeColors[d.type1]
+                          }}
+                        />
+                        {d.type1}
+                      </p>
+                      <p>Height: {d.height_m}m</p>
+                      <p>Weight: {d.weight_kg}kg</p>
+                    </div>
+                  )}
+                  renderKey={d => d.name || d.label}
+                  margin={{ left: 70, bottom: 60, right: 20, top: 20 }}
+                />
+              </div>
             </div>
           </div>
         </div>
