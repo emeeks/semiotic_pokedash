@@ -16,5 +16,6 @@ export const typeColors = {
   rock: "#A19D97",
   steel: "#637783",
   water: "#73D9E5",
-  normal: "#E0E0E0"
+  normal: "#E0E0E0",
+  none: "black"
 }

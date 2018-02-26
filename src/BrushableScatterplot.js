@@ -1,5 +1,15 @@
 import React from "react"
-import { MinimapXYFrame } from "semiotic"
+import { MinimapXYFrame, ORFrame } from "semiotic"
+
+function keyedData(d) {
+  return [
+    { key: "HP", value: d.hp },
+    { key: "DF", value: d.defense },
+    { key: "SA", value: d.sp_attack },
+    { key: "SP", value: d.speed },
+    { key: "AT", value: d.attack }
+  ]
+}
 
 export default props => {
   const { color, data, fullData, brushFunction } = props
@@ -17,7 +27,7 @@ export default props => {
         ]}
         hoverAnnotation={true}
         tooltipContent={d => (
-          <div className="tooltip-content">
+          <div className="tooltip-content" style={{ width: "300px" }}>
             <p>{d.name}</p>
             <p>
               <span
@@ -34,6 +44,22 @@ export default props => {
             </p>
             <p>Height: {d.height_m}m</p>
             <p>Weight: {d.weight_kg}kg</p>
+            <ORFrame
+              data={keyedData(d)}
+              size={[200, 200]}
+              type="point"
+              rExtent={[0, 200]}
+              projection="radial"
+              connectorType={() => true}
+              connectorStyle={{ stroke: "orange" }}
+              oLabel={true}
+              oAccessor="key"
+              rAccessor="value"
+              style={{ fill: "orange" }}
+              oPadding={2}
+              margin={{ left: 50, right: 10, top: 10, bottom: 30 }}
+              axis={{ orient: "left", tickValues: [50, 100, 150, 200] }}
+            />
           </div>
         )}
         renderKey={d => d.name}

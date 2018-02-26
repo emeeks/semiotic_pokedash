@@ -6,7 +6,7 @@ export default props => (
     <OrdinalFrame
       oAccessor="type1"
       rAccessor={d => +d.height_m}
-      summaryType="violin"
+      summaryType={{ type: "violin", bins: 10 }}
       summaryStyle={d => ({
         fill: props.color[d.type1],
         fillOpacity: 0.75,

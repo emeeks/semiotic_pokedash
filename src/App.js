@@ -5,10 +5,11 @@ import "./flexboxgrid.min.css"
 import BrushableScatterplot from "./BrushableScatterplot"
 import Legend from "./Legend"
 import TypeBars from "./TypeBars"
+import PokemonHierarchy from "./PokemonHierarchy"
 import pokedata from "./data/pokemon.json"
 import { typeColors } from "./settings/color"
 import { MinimapXYFrame, XYFrame } from "semiotic"
-console.log("pokedata", pokedata)
+import { nest } from "d3-collection"
 
 const pokeGenerations = []
 const pokeGenerationHash = {}
@@ -86,6 +87,13 @@ class App extends Component {
     const { filteredData } = this.state
     const filteredFamilies = filteredData.map(d => d.family)
 
+    const nestedData = nest()
+      .key(d => d.type2 || "none")
+      .key(d => d.type1)
+      .entries((filteredData.length > 0 && filteredData) || pokedata)
+
+    console.log("nestedData", nestedData)
+
     return (
       <div className="App">
         <header className="App-header">
@@ -101,6 +109,7 @@ class App extends Component {
                 color={typeColors}
               />
             </div>
+            <PokemonHierarchy color={typeColors} data={nestedData} />
           </div>
           <div className="col-xs-6">
             <div className="row">
@@ -124,8 +133,8 @@ class App extends Component {
                   )}
                   size={[550, 550]}
                   xAccessor={"generation"}
-                  yAccessor={"attack"}
-                  yExtent={[0, 160]}
+                  yAccessor={"height_m"}
+                  yExtent={[0]}
                   lineStyle={d => ({
                     stroke: d.color,
                     strokeOpacity: 0.8,
@@ -140,7 +149,7 @@ class App extends Component {
                   axes={[
                     {
                       orient: "left",
-                      label: "Attack",
+                      label: "Height (meters)",
                       baseline: false
                     },
                     {
@@ -171,8 +180,8 @@ class App extends Component {
                       <p>Weight: {d.weight_kg}kg</p>
                     </div>
                   )}
-                  renderKey={d => d.name || d.label}
                   margin={{ left: 70, bottom: 60, right: 20, top: 20 }}
+                  renderKey={d => d.name || d.label}
                 />
               </div>
             </div>
